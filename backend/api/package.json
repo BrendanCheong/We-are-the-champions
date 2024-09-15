@@ -10,7 +10,7 @@
     "lint": "eslint '../../services/api/src/**/*.{js,ts}'",
     "format": "prettier --write '../../services/api/src/**/*.{js,ts}'",
     "test": "jest",
-    "migrate:generate:dev": "dotenv -e src/.env -- npx prisma migrate dev"
+    "migrate:generate:dev": "dotenv -e src/.env.dev -- npx prisma migrate dev"
   },
   "keywords": [],
   "author": "",
