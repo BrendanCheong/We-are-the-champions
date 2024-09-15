@@ -9,12 +9,17 @@
     "dev": "pnpm exec nodemon --exec ts-node src/index.ts",
     "lint": "eslint '../../services/api/src/**/*.{js,ts}'",
     "format": "prettier --write '../../services/api/src/**/*.{js,ts}'",
-    "test": "jest"
+    "test": "jest",
+    "migrate:generate:dev": "dotenv -e src/.env -- npx prisma migrate dev"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "prisma": {
+    "schema": "src/database/prisma/schema.prisma"
+  },
   "dependencies": {
+    "@prisma/client": "^5.19.1",
     "ajv": "^8.17.1",
     "axios": "^1.7.7",
     "class-transformer": "^0.5.1",
@@ -24,14 +29,17 @@
     "express": "^4.21.0",
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
+    "prisma": "^5.19.1",
     "sanitize-html": "^2.13.0",
     "uuid": "^10.0.0"
   },
   "devDependencies": {
+    "@faker-js/faker": "^9.0.0",
     "@types/cookie-parser": "^1.4.7",
     "@types/cors": "^2.8.17",
     "@types/jest": "^29.5.13",
     "@types/jsonwebtoken": "^9.0.6",
-    "@types/sanitize-html": "^2.13.0"
+    "@types/sanitize-html": "^2.13.0",
+    "dotenv-cli": "^7.4.2"
   }
 }

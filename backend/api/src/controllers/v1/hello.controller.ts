@@ -10,14 +10,12 @@ export class HelloController extends BaseController {
     this.helloService = new HelloService();
   }
 
-  public getHello = (req: Request, res: Response): void => {
+  public getHello = async (req: Request, res: Response): Promise<void> => {
     try {
-      const message = this.helloService.getHelloMessage();
+      const message = await this.helloService.getHelloMessage();
       this.success(req, res, { message });
     } catch (error) {
-      if (error instanceof Error) {
-        this.processErrorCaught(req, res, error);
-      }
+      console.error(error)
     }
   };
 }
