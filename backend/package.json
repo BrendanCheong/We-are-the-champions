@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "We are the champions backend folder",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "setup": "npm install && cd api && npm install"
+  },
   "keywords": [],
   "author": "BrendanCheong",
   "license": "ISC",

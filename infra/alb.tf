@@ -1,9 +1,52 @@
 resource "aws_lb" "alb" {
   name               = "${var.app_name}-alb"
-  internal           = false
   load_balancer_type = "application"
-  security_groups    = [aws_security_group.alb_sg.id]
   subnets            = aws_subnet.public[*].id
+  security_groups    = [aws_security_group.alb_sg.id]
+}
+
+resource "aws_acm_certificate" "cert" {
+  domain_name               = var.domain_name
+  validation_method         = "DNS"
+  subject_alternative_names = ["www.${var.domain_name}"]
+
+  tags = {
+    Name = "${var.app_name}-certificate"
+  }
+}
+
+resource "aws_route53_record" "cert_validation" {
+  for_each = {
+    for dvo in aws_acm_certificate.cert.domain_validation_options : dvo.domain_name => {
+      name  = dvo.resource_record_name
+      type  = dvo.resource_record_type
+      value = dvo.resource_record_value
+    }
+  }
+
+  zone_id = aws_route53_zone.primary.zone_id
+  name    = each.value.name
+  type    = each.value.type
+  ttl     = 300
+  records = [each.value.value]
+}
+
+resource "aws_acm_certificate_validation" "cert_validation" {
+  certificate_arn         = aws_acm_certificate.cert.arn
+  validation_record_fqdns = [for record in aws_route53_record.cert_validation : record.fqdn]
+}
+
+resource "aws_lb_listener" "https" {
+  load_balancer_arn = aws_lb.alb.arn
+  port              = 443
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-2016-08"
+  certificate_arn   = aws_acm_certificate_validation.cert_validation.certificate_arn
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.frontend_tg.arn
+  }
 }
 
 resource "aws_lb_target_group" "frontend_tg" {
@@ -22,23 +65,8 @@ resource "aws_lb_target_group" "backend_tg" {
   target_type = "ip"
 }
 
-resource "aws_lb_listener" "http" {
-  load_balancer_arn = aws_lb.alb.arn
-  port              = 80
-  protocol          = "HTTP"
-
-  default_action {
-    type = "fixed-response"
-    fixed_response {
-      content_type = "text/plain"
-      message_body = "Not Found"
-      status_code  = "404"
-    }
-  }
-}
-
-resource "aws_lb_listener_rule" "frontend" {
-  listener_arn = aws_lb_listener.http.arn
+resource "aws_lb_listener_rule" "frontend_rule" {
+  listener_arn = aws_lb_listener.https.arn
   priority     = 100
 
   action {
@@ -48,13 +76,13 @@ resource "aws_lb_listener_rule" "frontend" {
 
   condition {
     path_pattern {
-      values = ["/*"]
+      values = ["/", "/index.html", "/static/*"]
     }
   }
 }
 
-resource "aws_lb_listener_rule" "backend" {
-  listener_arn = aws_lb_listener.http.arn
+resource "aws_lb_listener_rule" "backend_rule" {
+  listener_arn = aws_lb_listener.https.arn
   priority     = 200
 
   action {
@@ -64,7 +92,7 @@ resource "aws_lb_listener_rule" "backend" {
 
   condition {
     path_pattern {
-      values = ["/api/*"]
+      values = ["/api/v1/*"]
     }
   }
 }

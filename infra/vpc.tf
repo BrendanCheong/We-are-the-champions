@@ -38,7 +38,12 @@ resource "aws_route_table_association" "public" {
 
 # NAT Gateway for private subnets
 resource "aws_eip" "nat_eip" {
-  vpc = true
+  depends_on = [aws_internet_gateway.igw]
+
+  domain = "vpc"
+  tags = {
+    Name = "${var.app_name}-nat-eip"
+  }
 }
 
 resource "aws_nat_gateway" "nat_gw" {

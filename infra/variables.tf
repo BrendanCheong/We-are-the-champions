@@ -1,23 +1,34 @@
 variable "aws_region" {
-  default     = "ap-southeast-1"
   description = "AWS region to deploy resources"
 }
 
 variable "app_name" {
-  default = "govtech-champions"
-}
-
-variable "db_username" {
-  description = "govtech-password"
-}
-
-variable "db_password" {
-  description = "encrypted-password"
-  sensitive   = true
+  description = "Application name"
 }
 
 variable "domain_name" {
   description = "Your domain name"
+}
+
+variable "aws_account_id" {
+  description = "Your AWS account ID"
+}
+
+variable "db_username" {
+  description = "Database username"
+}
+
+variable "db_password" {
+  description = "Database password"
+}
+
+variable "db_name" {
+  description = "Database name"
+}
+
+variable "db_port" {
+  description = "Database port"
+  default     = "5432"
 }
 
 variable "availability_zones" {

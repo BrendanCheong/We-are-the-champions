@@ -1,8 +1,8 @@
 {
-  "name": "api",
+  "name": "we-are-the-champions-api",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "build": "tsc",
     "start": "ts-node src/index.ts",
@@ -10,6 +10,7 @@
     "lint": "eslint '../../services/api/src/**/*.{js,ts}'",
     "format": "prettier --write '../../services/api/src/**/*.{js,ts}'",
     "test": "jest",
+    "migrate:generate": "npx prisma migrate deploy",
     "migrate:generate:dev": "dotenv -e src/.env.dev -- npx prisma migrate dev"
   },
   "keywords": [],

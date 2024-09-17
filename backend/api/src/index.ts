@@ -6,7 +6,7 @@ const app = express();
 const port = 4000;
 
 // Define base path for API version 1
-const API_V1_BASE_PATH = '/v1/api';
+const API_V1_BASE_PATH = '/api/v1';
 
 // Middleware
 app.use(cors());

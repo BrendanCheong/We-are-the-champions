@@ -1,16 +1,18 @@
+version: '3.8'
+
 services:
   api:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.prod
     ports:
       - '4000:4000'
     depends_on:
       - db
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
     env_file:
       - ./api/src/.env.dev
-    volumes:
-      - ./api/src:/app
     networks:
       - backend-network
 
@@ -18,10 +20,9 @@ services:
     image: postgres:13
     restart: always
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: postgres
-      POSTGRES_PORT: 5434
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
     ports:
       - '5434:5432'
     volumes:

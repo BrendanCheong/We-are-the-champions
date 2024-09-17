@@ -7,7 +7,7 @@ const TEN_MINUTES = 1000 * 60 * 10;
 const RETRY_COUNT = 3;
 
 const fetchHelloMessage = async () => {
-  const response = await axios.get("http://localhost:4000/v1/api/hello");
+  const response = await axios.get(`${import.meta.env.VITE_APP_API_URL}/hello`);
   return response.data;
 };
 
