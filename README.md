@@ -9,6 +9,18 @@ GovTech TAP 2025 7 days Take home Assignment
 
 ## Backend
 - Express.js
-- DrizzleORM
+- PrismaORM
 - TypeScript
-- MySQL
+- PostgreSQL
+
+## Running Locally
+1. Run these commands to use local setup script
+2. 
+```sh
+chmod +x ./local.sh
+./local.sh
+```
+This script will essentially use docker to:
+- Create a postgres database with the credentials in `.env.local`
+- Create the backend server
+- Create the frontend server

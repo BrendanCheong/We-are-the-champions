@@ -85,7 +85,12 @@ resource "aws_ecs_task_definition" "frontend" {
           protocol      = "tcp"
         }
       ]
-      environment = []
+      environment = [
+        {
+          name  = "API_HOST"
+          value = "${var.domain_name}"
+        }
+      ]
       secrets = [
         {
           "name" : "VITE_APP_API_URL",

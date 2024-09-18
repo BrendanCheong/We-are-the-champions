@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import { HelloService } from '../../services/hello.service';
+import HelloService from '../../services/hello.service';
 import BaseController from '../base.controller';
 
-export class HelloController extends BaseController {
+export default class HelloController extends BaseController {
   private helloService: HelloService;
 
   constructor() {
@@ -15,7 +15,7 @@ export class HelloController extends BaseController {
       const message = await this.helloService.getHelloMessage();
       this.success(req, res, { message });
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
   };
 }

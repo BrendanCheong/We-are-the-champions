@@ -1,7 +1,7 @@
-import { BaseService } from "./base.service";
 import { faker } from '@faker-js/faker';
+import { BaseService } from './base.service';
 
-export class HelloService extends BaseService {
+export default class HelloService extends BaseService {
   async getHelloMessage(): Promise<string> {
     const name = faker.company.name();
     await this.prisma.team.create({
@@ -11,6 +11,6 @@ export class HelloService extends BaseService {
         groupNumber: 2,
       },
     });
-    return 'Hello World';
+    return 'Hi Mom!';
   }
 }

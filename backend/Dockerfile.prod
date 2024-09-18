@@ -2,24 +2,22 @@ FROM node:18-alpine
 
 WORKDIR /usr/src/app
 
-# Copy root package files
 COPY package*.json ./
+
 RUN npm install
+
+COPY api/package*.json ./api/
+
+RUN npm install --prefix ./api
+
+COPY . .
 
 WORKDIR /usr/src/app/api
 
-# Copy API package files and install dependencies
-COPY api/package*.json ./
-RUN npm install
+RUN npx prisma generate --schema=./src/database/prisma/schema.prisma
 
-# Copy the rest of the application code
-WORKDIR /usr/src/app
-COPY . .
-
-RUN cd api && npx prisma generate
-
-RUN npm run build --prefix api
+RUN npm run build
 
 EXPOSE 4000
 
-CMD ["sh", "-c", "npx prisma migrate deploy && npm start"]
+CMD ["sh", "-c", "npx prisma migrate deploy --schema=./src/database/prisma/schema.prisma && node dist/index.js"]

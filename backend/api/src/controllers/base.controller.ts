@@ -1,13 +1,11 @@
 import { Request, Response } from 'express';
 
 class BaseController {
-  // Method to send success response
-  success(req: Request, res: Response, body: any) {
+  success(req: Request, res: Response, body: unknown) {
     res.status(200).json(body);
   }
 
-  // Method to handle errors (simplified for now)
-  processErrorCaught(req: Request, res: Response, err: Error) {
+  static processErrorCaught(req: Request, res: Response, err: Error) {
     const errorObj = {
       error: err.name,
       message: err.message,

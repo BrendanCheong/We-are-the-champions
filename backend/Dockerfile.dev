@@ -1,0 +1,21 @@
+FROM node:18-alpine
+
+WORKDIR /usr/src/app
+
+COPY package*.json ./
+
+RUN npm install
+
+COPY api/package*.json ./api/
+
+COPY . .
+
+WORKDIR /usr/src/app/api
+
+RUN npm install
+
+RUN npm run build
+
+EXPOSE 4000
+
+CMD ["sh", "-c", "npx prisma generate --schema=./src/database/prisma/schema.prisma && npx prisma migrate deploy && npm run start:local"]

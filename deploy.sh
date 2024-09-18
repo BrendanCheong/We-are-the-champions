@@ -52,7 +52,7 @@ docker push "${ECR_FRONTEND_REPO}:latest"
 
 cd ..
 
-# Deploy the rest of the infrastructure
+# Deploy the rest of the infa
 cd infra
 
 terraform apply -auto-approve
