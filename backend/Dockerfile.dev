@@ -13,4 +13,4 @@ COPY . .
 
 EXPOSE 4000
 
-CMD ["sh", "-c", "npx prisma generate --schema=./src/database/prisma/schema.prisma && npx prisma migrate deploy && npm run start:local"]
+CMD ["sh", "-c", "npx prisma generate --schema=./src/database/prisma/schema.prisma && npx prisma migrate deploy && npx prisma db seed && npm run start:local"]

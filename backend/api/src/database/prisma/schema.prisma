@@ -14,6 +14,7 @@ model User {
   passwordHash   String
   createdAt      DateTime  @default(now())
   lastLogin      DateTime?
+  groups         Group[]
   createdTeams   Team[]    @relation("CreatedTeams")
   updatedTeams   Team[]    @relation("UpdatedTeams")
   createdMatches Match[]   @relation("CreatedMatches")
@@ -22,16 +23,20 @@ model User {
 }
 
 model Group {
-  id    Int    @id
-  name  String
-  teams Team[]
+  id          String @id @default(uuid())
+  groupNumber Int
+  userId      String
+  user        User   @relation(fields: [userId], references: [id])
+  teams       Team[]
+
+  @@unique([userId, groupNumber])
 }
 
 model Team {
   id                String   @id @default(uuid())
-  name              String   @unique
+  name              String
   registrationDate  DateTime
-  groupId           Int
+  groupId           String
   group             Group    @relation(fields: [groupId], references: [id])
   createdById       String
   createdBy         User     @relation("CreatedTeams", fields: [createdById], references: [id])
@@ -41,6 +46,8 @@ model Team {
   updatedAt         DateTime @updatedAt
   firstTeamMatches  Match[]  @relation("FirstTeam_Matches")
   secondTeamMatches Match[]  @relation("SecondTeam_Matches")
+
+  @@unique([createdById, name])
 }
 
 model Match {
@@ -69,4 +76,6 @@ model Log {
   recordId   String
   details    String?
   timestamp  DateTime @default(now())
+
+  @@index([userId])
 }
