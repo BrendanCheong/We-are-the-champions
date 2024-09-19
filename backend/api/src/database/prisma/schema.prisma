@@ -7,22 +7,66 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id             String    @id @default(uuid())
+  username       String    @unique
+  email          String    @unique
+  passwordHash   String
+  createdAt      DateTime  @default(now())
+  lastLogin      DateTime?
+  createdTeams   Team[]    @relation("CreatedTeams")
+  updatedTeams   Team[]    @relation("UpdatedTeams")
+  createdMatches Match[]   @relation("CreatedMatches")
+  updatedMatches Match[]   @relation("UpdatedMatches")
+  logs           Log[]
+}
+
+model Group {
+  id    Int    @id
+  name  String
+  teams Team[]
+}
+
 model Team {
-  id               Int      @id @default(autoincrement())
-  name             String   @unique
-  registrationDate DateTime
-  groupNumber      Int
-  matchesA         Match[]  @relation("TeamA_Matches")
-  matchesB         Match[]  @relation("TeamB_Matches")
+  id                String   @id @default(uuid())
+  name              String   @unique
+  registrationDate  DateTime
+  groupId           Int
+  group             Group    @relation(fields: [groupId], references: [id])
+  createdById       String
+  createdBy         User     @relation("CreatedTeams", fields: [createdById], references: [id])
+  createdAt         DateTime @default(now())
+  updatedById       String?
+  updatedBy         User?    @relation("UpdatedTeams", fields: [updatedById], references: [id])
+  updatedAt         DateTime @updatedAt
+  firstTeamMatches  Match[]  @relation("FirstTeam_Matches")
+  secondTeamMatches Match[]  @relation("SecondTeam_Matches")
 }
 
 model Match {
-  id         Int      @id @default(autoincrement())
-  teamAId    Int
-  teamBId    Int
-  teamAGoals Int
-  teamBGoals Int
-  matchDate  DateTime
-  teamA      Team     @relation("TeamA_Matches", fields: [teamAId], references: [id])
-  teamB      Team     @relation("TeamB_Matches", fields: [teamBId], references: [id])
+  id              String   @id @default(uuid())
+  firstTeamId     String
+  secondTeamId    String
+  firstTeamGoals  Int
+  secondTeamGoals Int
+  matchDate       DateTime @default(now())
+  firstTeam       Team     @relation("FirstTeam_Matches", fields: [firstTeamId], references: [id])
+  secondTeam      Team     @relation("SecondTeam_Matches", fields: [secondTeamId], references: [id])
+  createdById     String
+  createdBy       User     @relation("CreatedMatches", fields: [createdById], references: [id])
+  createdAt       DateTime @default(now())
+  updatedById     String?
+  updatedBy       User?    @relation("UpdatedMatches", fields: [updatedById], references: [id])
+  updatedAt       DateTime @updatedAt
+}
+
+model Log {
+  id         String   @id @default(uuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  actionType String
+  tableName  String
+  recordId   String
+  details    String?
+  timestamp  DateTime @default(now())
 }
