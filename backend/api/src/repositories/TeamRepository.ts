@@ -1,5 +1,6 @@
 import { Prisma } from '@prisma/client';
 import prisma from '../database/prisma';
+import { TeamWithGroup } from '../types/team';
 
 export default class TeamRepository {
   async createTeam(data: Prisma.TeamCreateInput) {
@@ -7,7 +8,7 @@ export default class TeamRepository {
     return team;
   }
 
-  async getTeamsByUserId(userId: string) {
+  async getTeamsByUserId(userId: string): Promise<TeamWithGroup[]> {
     const teams = await prisma.team.findMany({
       where: { createdById: userId },
       include: { group: true },

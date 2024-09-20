@@ -4,6 +4,7 @@ import UserController from './controllers/v1/user.controller';
 import TeamController from './controllers/v1/team.controller';
 import registerControllers from './utils/registerControllers';
 import MatchController from './controllers/v1/match.controller';
+import RankingController from './controllers/v1/ranking.controller';
 
 const app = express();
 const port = 4000;
@@ -16,7 +17,7 @@ app.use(cors());
 app.use(express.json());
 
 // Register versioned routes
-registerControllers(app, [UserController, TeamController, MatchController], API_V1_BASE_PATH);
+registerControllers(app, [UserController, TeamController, MatchController, RankingController], API_V1_BASE_PATH);
 
 // Error handling for undefined routes (404)
 app.use((_req, res) => {

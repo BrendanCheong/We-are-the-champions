@@ -1,5 +1,6 @@
 import { Prisma } from '@prisma/client';
 import prisma from '../database/prisma';
+import { MatchWithTeamNames } from '../types/match';
 
 export default class MatchRepository {
   async createMatch(data: Prisma.MatchCreateInput) {
@@ -15,7 +16,7 @@ export default class MatchRepository {
     return matches;
   }
 
-  async getMatchesAndTeamByUserId(userId: string) {
+  async getMatchesAndTeamByUserId(userId: string): Promise<MatchWithTeamNames[]> {
     const matches = await prisma.match.findMany({
       where: { createdById: userId },
       include: {
