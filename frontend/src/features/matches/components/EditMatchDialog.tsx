@@ -18,6 +18,7 @@ import { GET_TEAMS_AND_GROUP_QUERY_KEY } from "@/features/teams/constants";
 import { GET_MATCHES_QUERY_KEY } from "../constants";
 import { isAxiosError } from "axios";
 import { useToast } from "@/hooks/use-toast";
+import { GET_LOGS_QUERY_KEY } from "@/features/logging/constants";
 
 interface MatchResponse {
   id: string;
