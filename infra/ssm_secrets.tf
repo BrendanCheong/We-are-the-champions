@@ -11,3 +11,10 @@ resource "aws_ssm_parameter" "frontend_api_url" {
   type        = "String"
   value       = "https://${var.domain_name}/api/v1"
 }
+
+resource "aws_ssm_parameter" "clerk_publishable_key" {
+  name        = "/${var.app_name}/VITE_CLERK_PUBLISHABLE_KEY"
+  description = "Clerk Publishable Key for the frontend"
+  type        = "SecureString"
+  value       = "pk_test_c3VtbWFyeS1sb2JzdGVyLTEuY2xlcmsuYWNjb3VudHMuZGV2JA"
+}

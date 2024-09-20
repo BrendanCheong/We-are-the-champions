@@ -45,7 +45,7 @@ cd ..
 echo "Building and pushing frontend image..."
 cd frontend
 
-docker build -t "${APP_NAME}-frontend" -f Dockerfile.prod --build-arg VITE_APP_API_URL="https://${DOMAIN_NAME}/api/v1" .
+docker build -t "${APP_NAME}-frontend" -f Dockerfile.prod --build-arg VITE_APP_API_URL="https://${DOMAIN_NAME}/api/v1" VITE_CLERK_PUBLISHABLE_KEY="pk_test_c3VtbWFyeS1sb2JzdGVyLTEuY2xlcmsuYWNjb3VudHMuZGV2JA" .
 
 docker tag "${APP_NAME}-frontend:latest" "${ECR_FRONTEND_REPO}:latest"
 docker push "${ECR_FRONTEND_REPO}:latest"

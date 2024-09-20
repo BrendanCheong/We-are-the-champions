@@ -95,6 +95,10 @@ resource "aws_ecs_task_definition" "frontend" {
         {
           "name" : "VITE_APP_API_URL",
           "valueFrom" : aws_ssm_parameter.frontend_api_url.arn
+        },
+        {
+          "name" : "VITE_CLERK_PUBLISHABLE_KEY",
+          "valueFrom" : aws_ssm_parameter.clerk_publishable_key.arn
         }
       ]
       logConfiguration = {
