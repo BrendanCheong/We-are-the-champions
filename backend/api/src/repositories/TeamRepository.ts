@@ -28,29 +28,14 @@ export default class TeamRepository {
     return team;
   }
 
-  async countTeamsByUserId(userId: string) {
-    const count = await prisma.team.count({
-      where: { createdById: userId },
-    });
-    return count;
-  }
-
   async createManyTeams(data: Prisma.TeamCreateManyInput[]) {
     const batchTeams = await prisma.team.createMany({ data });
     return batchTeams;
   }
 
-  async updateTeam(id: string, data: Prisma.TeamUpdateInput) {
-    const updatedTeam = await prisma.team.update({
-      where: { id },
-      data,
-    });
-    return updatedTeam;
-  }
-
-  async deleteTeam(id: string) {
-    const deletedTeam = await prisma.team.delete({
-      where: { id },
+  async deleteTeamsByUserId(userId: string) {
+    const deletedTeam = await prisma.team.deleteMany({
+      where: { createdById: userId },
     });
     return deletedTeam;
   }

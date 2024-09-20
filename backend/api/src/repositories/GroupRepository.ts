@@ -13,4 +13,11 @@ export default class GroupRepository {
     const groups = await prisma.group.createMany({ data });
     return groups;
   }
+
+  async deleteGroupsByUserId(userId: string) {
+    const deletedGroups = await prisma.group.deleteMany({
+      where: { userId },
+    });
+    return deletedGroups;
+  }
 }
