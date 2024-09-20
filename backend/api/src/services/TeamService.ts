@@ -8,21 +8,12 @@ import LoggingService from './LoggingService';
 import { MAXIMUM_AMOUNT_OF_GROUPS, MAXIMUM_AMOUNT_OF_TEAMS } from '../constants/global';
 
 export default class TeamService {
-  private teamRepository: TeamRepository;
-
-  private groupRepository: GroupRepository;
-
-  private loggingService: LoggingService;
-
-  constructor(teamRepository: TeamRepository, groupRepository: GroupRepository, loggingService: LoggingService) {
-    this.teamRepository = teamRepository;
-    this.groupRepository = groupRepository;
-    this.loggingService = loggingService;
-  }
-
   async createTeams(input: TeamsInput): Promise<Team[]> {
-    const existingTeams = await this.teamRepository.getTeamsByUserId(input.userId);
-    const existingGroups = await this.groupRepository.getGroupsByUserId(input.userId);
+    const teamRepository = new TeamRepository();
+    const groupRepository = new GroupRepository();
+    const loggingService = new LoggingService();
+    const existingTeams = await teamRepository.getTeamsByUserId(input.userId);
+    const existingGroups = await groupRepository.getGroupsByUserId(input.userId);
 
     if (existingTeams.length + input.teams.length > MAXIMUM_AMOUNT_OF_TEAMS) {
       throw new Error(`Total number of teams cannot exceed ${MAXIMUM_AMOUNT_OF_TEAMS}`);
@@ -49,11 +40,11 @@ export default class TeamService {
       }));
 
     if (groupsToCreate.length > 0) {
-      await this.groupRepository.createManyGroups(groupsToCreate);
+      await groupRepository.createManyGroups(groupsToCreate);
     }
 
     // Fetch all groups again to ensure we have the latest data
-    const allUserGroups = await this.groupRepository.getGroupsByUserId(input.userId);
+    const allUserGroups = await groupRepository.getGroupsByUserId(input.userId);
     const groupMap = new Map(allUserGroups.map((g) => [g.groupNumber, g.id]));
 
     const teamsToCreate = input.teams.map((team) => {
@@ -76,9 +67,9 @@ export default class TeamService {
       };
     });
 
-    const createdTeams = await this.teamRepository.createManyTeams(teamsToCreate);
+    const createdTeams = await teamRepository.createManyTeams(teamsToCreate);
 
-    await this.loggingService.log({
+    await loggingService.log({
       userId: input.userId,
       actionType: 'CREATE',
       tableName: 'Team',
@@ -86,7 +77,13 @@ export default class TeamService {
       details: `Bulk creation of ${createdTeams.count} teams`,
     });
 
-    const allTeams = await this.teamRepository.getTeamsByUserId(input.userId);
+    const allTeams = await teamRepository.getTeamsByUserId(input.userId);
     return allTeams;
+  }
+
+  async getTeamsAndGroup(userId: string) {
+    const teamRepository = new TeamRepository();
+    const teams = await teamRepository.getTeamsByUserId(userId);
+    return teams;
   }
 }

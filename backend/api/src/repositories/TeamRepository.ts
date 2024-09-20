@@ -10,6 +10,7 @@ export default class TeamRepository {
   async getTeamsByUserId(userId: string) {
     const teams = await prisma.team.findMany({
       where: { createdById: userId },
+      include: { group: true },
     });
     return teams;
   }

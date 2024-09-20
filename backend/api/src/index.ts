@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import UserController from './controllers/v1/user.controller';
+import TeamController from './controllers/v1/team.controller';
 import registerControllers from './utils/registerControllers';
 
 const app = express();
@@ -14,7 +15,7 @@ app.use(cors());
 app.use(express.json());
 
 // Register versioned routes
-registerControllers(app, [UserController], API_V1_BASE_PATH);
+registerControllers(app, [UserController, TeamController], API_V1_BASE_PATH);
 
 // Error handling for undefined routes (404)
 app.use((_req, res) => {
