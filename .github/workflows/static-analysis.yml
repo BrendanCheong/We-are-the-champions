@@ -18,20 +18,20 @@ jobs:
         node-version: '14'
     
     - name: Install dependencies (Frontend)
-      working-directory: ./we-are-the-champions/frontend
+      working-directory: ./frontend
       run: npm ci
     
     - name: Run ESLint (Frontend)
-      working-directory: ./we-are-the-champions/frontend
-      run: npx eslint . --ext .js,.jsx,.ts,.tsx --format json --output-file ../../frontend-eslint-report.json
+      working-directory: ./frontend
+      run: npx eslint . --ext .js,.jsx,.ts,.tsx --format json --output-file ../frontend-eslint-report.json
     
     - name: Install dependencies (Backend)
-      working-directory: ./we-are-the-champions/backend
+      working-directory: ./backend
       run: npm ci
     
     - name: Run ESLint (Backend)
-      working-directory: ./we-are-the-champions/backend
-      run: npx eslint . --ext .js,.ts --format json --output-file ../../backend-eslint-report.json
+      working-directory: ./backend
+      run: npx eslint . --ext .js,.ts --format json --output-file ../backend-eslint-report.json
     
     - name: Upload ESLint reports
       uses: actions/upload-artifact@v4
