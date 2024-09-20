@@ -36,7 +36,6 @@ export const useCreateTeamsMutation = (
   return useMutation({
     mutationKey: CREATE_TEAMS_MUTATION_KEY,
     mutationFn: postCreateTeams,
-    retry: RETRY_COUNT,
     ...options,
   });
 };

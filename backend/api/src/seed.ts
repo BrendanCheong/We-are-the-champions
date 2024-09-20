@@ -13,6 +13,7 @@ async function main() {
     },
     update: {},
     create: {
+      id: '7e840d3c-0d06-4bf3-9b39-bf25b3fbcf58',
       email: 'test@gmail.com',
       username: 'test@gmail.com',
       passwordHash: hashedPassword,

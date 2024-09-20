@@ -23,6 +23,17 @@ export interface CreateMatchesResponse {
   updatedById: string | null;
 }
 
+export interface PutMatchData {
+  firstTeamName: string;
+  secondTeamName: string;
+  firstTeamId: string;
+  secondTeamId: string;
+  firstTeamGoal: number;
+  secondTeamGoal: number;
+  matchId: string;
+  userId: string;
+}
+
 export interface GetMatchesAndTeamsResponse extends CreateMatchesResponse {
   firstTeamName: string;
   secondTeamName: string;
