@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import { ZodError } from 'zod';
 import Controller from '../../decorators/Controller';
-import { Get, Post } from '../../decorators/Methods';
-import { MatchesInputSchema } from '../../schema/MatchSchema';
+import { Get, Post, Put } from '../../decorators/Methods';
+import { MatchesInputSchema, MatchPutRequest, MatchPutSchema } from '../../schema/MatchSchema';
 import MatchService from '../../services/MatchService';
 
 @Controller('matches')
@@ -34,6 +34,35 @@ class MatchController {
     } catch (error) {
       console.error('Error getting matches:', error);
       res.status(500).json({ error: 'An error occurred while getting matches' });
+    }
+  }
+
+  @Put('/:matchId')
+  async updateMatch(req: Request, res: Response): Promise<void> {
+    try {
+      const matchService = new MatchService();
+      const { matchId } = req.params;
+      const { userId } = req.params; // Assuming userId is also in the route params
+
+      // Validate the request body
+      const validationResult = MatchPutSchema.safeParse({ ...req.body, matchId, userId });
+
+      if (!validationResult.success) {
+        res.status(400).json({ error: 'Invalid request data', details: validationResult.error.errors });
+        return;
+      }
+
+      const updateData: MatchPutRequest = validationResult.data;
+      const updatedMatch = await matchService.updateMatch({ ...updateData, matchId });
+
+      res.status(200).json(updatedMatch);
+    } catch (error) {
+      console.error('Error updating match:', error);
+      if (error instanceof Error) {
+        res.status(400).json({ error: error.message });
+      } else {
+        res.status(500).json({ error: 'An error occurred while updating the match' });
+      }
     }
   }
 }
