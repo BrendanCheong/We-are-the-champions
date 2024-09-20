@@ -12,4 +12,17 @@ export const MatchesInputSchema = z.object({
   matches: z.array(MatchSchema),
 });
 
+export const MatchPutSchema = z.object({
+  firstTeamName: z.string(),
+  secondTeamName: z.string(),
+  firstTeamId: z.string(),
+  secondTeamId: z.string(),
+  firstTeamGoal: z.number(),
+  secondTeamGoal: z.number(),
+  matchId: z.string(),
+  userId: z.string(),
+});
+
+export type MatchPutRequest = z.infer<typeof MatchPutSchema>;
+
 export type MatchesInput = z.infer<typeof MatchesInputSchema>;

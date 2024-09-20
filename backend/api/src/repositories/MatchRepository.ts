@@ -34,12 +34,58 @@ export default class MatchRepository {
     }));
   }
 
-  async deleteMatchesByUserId(userId: string) {
-    const deletedMatches = await prisma.match.deleteMany({
-      where: { createdById: userId },
+  async findMatch(userId: string, matchId: string) {
+    const match = await prisma.match.findFirst({
+      where: {
+        id: matchId,
+        createdById: userId,
+      },
+      include: {
+        firstTeam: true,
+        secondTeam: true,
+      },
+    });
+    return match;
+  }
+
+  async haveTeamsPlayedEachOther(firstTeamName: string, secondTeamName: string, userId: string): Promise<boolean> {
+    const matchCount = await prisma.match.count({
+      where: {
+        createdById: userId,
+        OR: [
+          {
+            firstTeam: { name: firstTeamName },
+            secondTeam: { name: secondTeamName },
+          },
+          {
+            firstTeam: { name: secondTeamName },
+            secondTeam: { name: firstTeamName },
+          },
+        ],
+      },
     });
 
-    return deletedMatches;
+    return matchCount > 0;
+  }
+
+  async updateMatchScores(
+    updates: { id: string; firstTeamGoals: number; secondTeamGoals: number; updatedById: string }[],
+  ) {
+    const matches = await prisma.$transaction(async (tx) =>
+      Promise.all(
+        updates.map((update) =>
+          tx.match.update({
+            where: { id: update.id },
+            data: {
+              firstTeamGoals: update.firstTeamGoals,
+              secondTeamGoals: update.secondTeamGoals,
+              updatedById: update.updatedById,
+            },
+          }),
+        ),
+      ),
+    );
+    return matches;
   }
 
   async createManyMatchesTransaction(

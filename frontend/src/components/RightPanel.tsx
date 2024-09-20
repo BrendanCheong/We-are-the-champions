@@ -17,7 +17,6 @@ const RightPanel: React.FC = () => {
     useMatchesQuery(TEST_USER_ID);
   const { data: leaderboards, isLoading: isLeaderboardsLoading } =
     useRankingQuery(TEST_USER_ID);
-  console.log(leaderboards, isLeaderboardsLoading);
 
   return (
     <div className={`${isMobile ? "w-full" : "w-[57%]"} p-4`} id="right-panel">

@@ -16,6 +16,16 @@ export default class TeamRepository {
     return teams;
   }
 
+  async getTeamByIdAndUserId(teamId: string, userId: string) {
+    const team = await prisma.team.findFirst({
+      where: {
+        id: teamId,
+        createdById: userId,
+      },
+    });
+    return team;
+  }
+
   async getTeamByNameAndUserId(name: string, userId: string) {
     const team = await prisma.team.findUnique({
       where: {
@@ -38,5 +48,22 @@ export default class TeamRepository {
       where: { createdById: userId },
     });
     return deletedTeam;
+  }
+
+  async updateTeamNames(updates: { id: string; name: string; updatedById: string }[]) {
+    const teams = await prisma.$transaction(async (tx) =>
+      Promise.all(
+        updates.map((update) =>
+          tx.team.update({
+            where: { id: update.id },
+            data: {
+              name: update.name,
+              updatedById: update.updatedById,
+            },
+          }),
+        ),
+      ),
+    );
+    return teams;
   }
 }

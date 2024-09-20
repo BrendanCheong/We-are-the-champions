@@ -1,6 +1,6 @@
 import MatchRepository from '../repositories/MatchRepository';
 import TeamRepository from '../repositories/TeamRepository';
-import { MatchesInput } from '../schema/MatchSchema';
+import { MatchesInput, MatchPutRequest } from '../schema/MatchSchema';
 
 export default class MatchService {
   async createMatches(input: MatchesInput) {
@@ -60,5 +60,72 @@ export default class MatchService {
     const matchRepository = new MatchRepository();
     const matches = await matchRepository.getMatchesAndTeamByUserId(userId);
     return matches;
+  }
+
+  async updateMatch(data: MatchPutRequest) {
+    const matchRepository = new MatchRepository();
+    const { firstTeamName, secondTeamName, firstTeamId, secondTeamId, firstTeamGoal, secondTeamGoal, matchId, userId } =
+      data;
+
+    // Find the original match
+    const originalMatch = await matchRepository.findMatch(userId, matchId);
+
+    if (!originalMatch) {
+      throw new Error('Match result not found or does not belong to the user. Please refresh the page.');
+    }
+
+    // Check if teams are in the same group
+    await this.validateTeamsInSameGroup(firstTeamId, secondTeamId, userId);
+
+    const haveTeamsPlayed = await matchRepository.haveTeamsPlayedEachOther(firstTeamName, secondTeamName, userId);
+    if (haveTeamsPlayed) {
+      throw new Error('These teams have already played against each other.');
+    }
+
+    // Update match score
+    await this.updateMatchScore(matchId, firstTeamGoal, secondTeamGoal, userId);
+
+    // Check if team names have changed
+    if (originalMatch.firstTeam.name !== firstTeamName) {
+      await this.updateTeamName(firstTeamId, firstTeamName, userId);
+    }
+
+    if (originalMatch.secondTeam.name !== secondTeamName) {
+      await this.updateTeamName(secondTeamId, secondTeamName, userId);
+    }
+  }
+
+  private async updateMatchScore(matchId: string, firstTeamGoals: number, secondTeamGoals: number, userId: string) {
+    const matchRepository = new MatchRepository();
+    const updatedMatch = await matchRepository.updateMatchScores([
+      { id: matchId, firstTeamGoals, secondTeamGoals, updatedById: userId },
+    ]);
+    return updatedMatch;
+  }
+
+  private async validateTeamsInSameGroup(firstTeamId: string, secondTeamId: string, userId: string) {
+    const teamRepository = new TeamRepository();
+    const firstTeam = await teamRepository.getTeamByIdAndUserId(firstTeamId, userId);
+    const secondTeam = await teamRepository.getTeamByIdAndUserId(secondTeamId, userId);
+
+    if (!firstTeam || !secondTeam) {
+      throw new Error('One or both teams do not exist or do not belong to the user');
+    }
+
+    if (firstTeam.groupId !== secondTeam.groupId) {
+      throw new Error('Teams are not in the same group');
+    }
+  }
+
+  private async updateTeamName(teamId: string, newName: string, userId: string) {
+    const teamRepository = new TeamRepository();
+
+    const newTeam = await teamRepository.getTeamByNameAndUserId(newName, userId);
+    if (!newTeam) {
+      throw new Error(`Team with name '${newName}' does not exist or does not belong to the user`);
+    }
+
+    // If we've passed all checks, update the team name
+    await teamRepository.updateTeamNames([{ id: teamId, name: newName, updatedById: userId }]);
   }
 }

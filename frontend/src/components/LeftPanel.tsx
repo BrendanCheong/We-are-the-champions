@@ -21,8 +21,6 @@ const LeftPanel: React.FC = () => {
   const { data: matches, isLoading: isMatchesLoading } =
     useMatchesQuery(TEST_USER_ID);
 
-  console.log(matches, isMatchesLoading);
-
   return (
     <div
       className={`${
