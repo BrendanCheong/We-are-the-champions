@@ -16,6 +16,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { GET_RANKING_QUERY_KEY } from "@/features/leaderboard/constants";
 import { GET_MATCHES_QUERY_KEY } from "@/features/matches/constants";
 import { GET_TEAMS_AND_GROUP_QUERY_KEY } from "@/features/teams/constants";
+import { GET_LOGS_QUERY_KEY } from "@/features/logging/constants";
 
 const DeleteAllDataDialog: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -33,6 +34,9 @@ const DeleteAllDataDialog: React.FC = () => {
         }),
         queryClient.invalidateQueries({
           queryKey: [GET_RANKING_QUERY_KEY, TEST_USER_ID],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: [GET_LOGS_QUERY_KEY, TEST_USER_ID],
         }),
       ]);
       toast({

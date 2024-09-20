@@ -15,6 +15,7 @@ import { useCreateTeamsMutation } from "../api/useTeamsQuery";
 import { useQueryClient } from "@tanstack/react-query";
 import { GET_RANKING_QUERY_KEY } from "@/features/leaderboard/constants";
 import { GET_MATCHES_QUERY_KEY } from "@/features/matches/constants";
+import { GET_LOGS_QUERY_KEY } from "@/features/logging/constants";
 
 interface IProps {
   teams: TeamAndGroupResponse[];
