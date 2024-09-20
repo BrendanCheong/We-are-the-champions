@@ -10,12 +10,12 @@ jobs:
   eslint:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     
     - name: Use Node.js
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v4
       with:
-        node-version: '14'  # Adjust this to match your project's Node.js version
+        node-version: '14'
     
     - name: Install dependencies (Frontend)
       working-directory: ./we-are-the-champions/frontend
@@ -34,7 +34,7 @@ jobs:
       run: npx eslint . --ext .js,.ts --format json --output-file ../../backend-eslint-report.json
     
     - name: Upload ESLint reports
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: eslint-reports
         path: |
