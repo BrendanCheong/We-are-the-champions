@@ -8,14 +8,19 @@ import {
 import { Label } from "@/components/ui/label";
 import React from "react";
 import TeamsTextArea from "@/features/teams/components/TeamsTextArea";
-import { Button } from "./ui/button";
-import { Textarea } from "./ui/textarea";
 import { TEST_USER_ID } from "@/config/constants";
 import { useTeamsAndGroupQuery } from "@/features/teams/api/useTeamsQuery";
+import MatchesTextArea from "@/features/matches/components/MatchesTextArea";
+import { useMatchesQuery } from "@/features/matches/api/useMatchesQuery";
 
 const LeftPanel: React.FC = () => {
   const isMobile = useIsMobile();
-  const { data, isLoading } = useTeamsAndGroupQuery(TEST_USER_ID);
+  const { data: teams, isLoading: isTeamsLoading } =
+    useTeamsAndGroupQuery(TEST_USER_ID);
+  const { data: matches, isLoading: isMatchesLoading } =
+    useMatchesQuery(TEST_USER_ID);
+
+  console.log(matches, isMatchesLoading);
 
   return (
     <div
@@ -34,30 +39,11 @@ const LeftPanel: React.FC = () => {
               Add registered teams and matches played here.
             </Label>
             <div className="pt-4">
-              <TeamsTextArea teams={data ?? []} isLoading={isLoading} />
-              <div className="mb-4">
-                {/** Text Area */}
-                <div className="grid w-full gap-1.5">
-                  <Label htmlFor="message-2">Matches</Label>
-                  <Textarea
-                    placeholder="Type your message here."
-                    id="message-2"
-                  />
-                </div>
-                <section
-                  id="button-container"
-                  className="flex justify-between mt-4"
-                >
-                  <div className="w-[80%]">
-                    <Button className="w-full">Save</Button>
-                  </div>
-                  <div className="w-[20%] ml-2">
-                    <Button className="w-full" variant="outline">
-                      Clear
-                    </Button>
-                  </div>
-                </section>
-              </div>
+              <TeamsTextArea teams={teams ?? []} isLoading={isTeamsLoading} />
+              <MatchesTextArea
+                matches={matches ?? []}
+                isLoading={isMatchesLoading}
+              />
             </div>
           </AccordionContent>
         </AccordionItem>
