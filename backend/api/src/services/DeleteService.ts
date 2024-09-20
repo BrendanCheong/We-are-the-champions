@@ -1,7 +1,9 @@
 import prisma from '../database/prisma';
+import LoggingService from './LoggingService';
 
 export default class DeleteService {
   async deleteAllMatchesGroupsTeams(userId: string) {
+    const loggingService = new LoggingService();
     const deleted = await prisma.$transaction(async (tx) => {
       // Delete matches first
       const deletedMatches = await tx.match.deleteMany({
@@ -24,8 +26,15 @@ export default class DeleteService {
         deletedGroups: deletedGroups.count,
       };
     });
+    // Log the deletion
+    await loggingService.log({
+      userId,
+      actionType: 'DELETE',
+      tableName: 'ALL',
+      recordId: userId,
+      details: `Deleted ${deleted.deletedMatches} matches, ${deleted.deletedTeams} teams, and ${deleted.deletedGroups} groups.`,
+    });
 
-    return deleted;
     return deleted;
   }
 }

@@ -97,10 +97,11 @@ export default class MatchRepository {
       secondTeamGoals: number;
     }>,
   ) {
-    return prisma.$transaction(async (tx) =>
+    const createdMatches = await prisma.$transaction(async (tx) =>
       tx.match.createMany({
         data: matches,
       }),
     );
+    return createdMatches;
   }
 }

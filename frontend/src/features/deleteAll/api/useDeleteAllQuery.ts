@@ -6,7 +6,7 @@ import { DELETE_ALL_MUTATION_KEY } from "../constant";
 
 const deleteAllTeamsMatchesGroups = async (userId: string) => {
   const response = await axios.delete(
-    `${import.meta.env.VITE_APP_API_URL}/delete-all?userId=${userId}`
+    `${import.meta.env.VITE_APP_API_URL}/delete-all/${userId}`
   );
   return response.data;
 };

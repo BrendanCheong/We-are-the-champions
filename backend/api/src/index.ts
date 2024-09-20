@@ -6,6 +6,7 @@ import registerControllers from './utils/registerControllers';
 import MatchController from './controllers/v1/match.controller';
 import RankingController from './controllers/v1/ranking.controller';
 import DeleteController from './controllers/v1/delete.controller';
+import LoggingController from './controllers/v1/logging.controller';
 
 const app = express();
 const port = 4000;
@@ -20,7 +21,7 @@ app.use(express.json());
 // Register versioned routes
 registerControllers(
   app,
-  [UserController, TeamController, MatchController, RankingController, DeleteController],
+  [UserController, TeamController, MatchController, RankingController, DeleteController, LoggingController],
   API_V1_BASE_PATH,
 );
 

@@ -10,6 +10,7 @@ import { useCreateMatchesMutation } from "../api/useMatchesQuery";
 import { useQueryClient } from "@tanstack/react-query";
 import { GET_RANKING_QUERY_KEY } from "@/features/leaderboard/constants";
 import { GET_TEAMS_AND_GROUP_QUERY_KEY } from "@/features/teams/constants";
+import { GET_LOGS_QUERY_KEY } from "@/features/logging/constants";
 
 interface IProps {
   matches: GetMatchesAndTeamsResponse[];
@@ -33,6 +34,9 @@ const MatchesTextArea: React.FC<IProps> = (props) => {
         }),
         queryClient.invalidateQueries({
           queryKey: [GET_RANKING_QUERY_KEY, TEST_USER_ID],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: [GET_LOGS_QUERY_KEY, TEST_USER_ID],
         }),
       ]);
       setMatchesInputError("");

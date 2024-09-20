@@ -5,7 +5,7 @@ import DeleteService from '../../services/DeleteService';
 
 @Controller('delete-all')
 class DeleteController {
-  @Delete('/')
+  @Delete('/:userId')
   async deleteAll(req: Request, res: Response): Promise<void> {
     try {
       const { userId } = req.params;

@@ -1,12 +1,14 @@
 import MatchRepository from '../repositories/MatchRepository';
 import TeamRepository from '../repositories/TeamRepository';
 import { MatchesInput, MatchPutRequest } from '../schema/MatchSchema';
+import LoggingService from './LoggingService';
 
 export default class MatchService {
   async createMatches(input: MatchesInput) {
     const { userId, matches } = input;
     const matchRepository = new MatchRepository();
     const teamRepository = new TeamRepository();
+    const loggingService = new LoggingService();
 
     const teams = await teamRepository.getTeamsByUserId(userId);
     const teamMap = new Map(teams.map((team) => [team.name, { id: team.id, groupId: team.groupId }]));
@@ -53,6 +55,15 @@ export default class MatchService {
     }));
     const createdMatches = await matchRepository.createManyMatchesTransaction(matchesToCreate);
 
+    // Log creation
+    await loggingService.log({
+      userId,
+      actionType: 'CREATE',
+      tableName: 'Match',
+      recordId: matchesToCreate.length.toString(),
+      details: `Bulk creation of ${matchesToCreate.length} matches`,
+    });
+
     return createdMatches;
   }
 
@@ -97,9 +108,18 @@ export default class MatchService {
 
   private async updateMatchScore(matchId: string, firstTeamGoals: number, secondTeamGoals: number, userId: string) {
     const matchRepository = new MatchRepository();
+    const loggingService = new LoggingService();
     const updatedMatch = await matchRepository.updateMatchScores([
       { id: matchId, firstTeamGoals, secondTeamGoals, updatedById: userId },
     ]);
+    // Log the update
+    await loggingService.log({
+      userId,
+      actionType: 'PUT',
+      tableName: 'Match',
+      recordId: matchId,
+      details: `Updated match score to ${firstTeamGoals} - ${secondTeamGoals}`,
+    });
     return updatedMatch;
   }
 
@@ -119,6 +139,7 @@ export default class MatchService {
 
   private async updateTeamName(teamId: string, newName: string, userId: string) {
     const teamRepository = new TeamRepository();
+    const loggingService = new LoggingService();
 
     const newTeam = await teamRepository.getTeamByNameAndUserId(newName, userId);
     if (!newTeam) {
@@ -127,5 +148,14 @@ export default class MatchService {
 
     // If we've passed all checks, update the team name
     await teamRepository.updateTeamNames([{ id: teamId, name: newName, updatedById: userId }]);
+
+    // Log the update
+    await loggingService.log({
+      userId,
+      actionType: 'PUT',
+      tableName: 'Team',
+      recordId: teamId,
+      details: `Updated team name to ${newName}`,
+    });
   }
 }

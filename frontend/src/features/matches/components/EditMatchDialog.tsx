@@ -72,6 +72,9 @@ const EditMatchDialog: React.FC<EditMatchDialogProps> = ({
         queryClient.invalidateQueries({
           queryKey: [GET_RANKING_QUERY_KEY, TEST_USER_ID],
         }),
+        queryClient.invalidateQueries({
+          queryKey: [GET_LOGS_QUERY_KEY, TEST_USER_ID],
+        }),
       ]);
       handleClose();
     },

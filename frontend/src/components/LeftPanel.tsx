@@ -13,6 +13,8 @@ import { useTeamsAndGroupQuery } from "@/features/teams/api/useTeamsQuery";
 import MatchesTextArea from "@/features/matches/components/MatchesTextArea";
 import { useMatchesQuery } from "@/features/matches/api/useMatchesQuery";
 import DeleteAllDataDialog from "@/features/deleteAll/components/DeleteAllDialog";
+import { useLogsQuery } from "@/features/logging/api/useLoggingQuery";
+import LoggingTable from "@/features/logging/component/LoggingTable";
 
 const LeftPanel: React.FC = () => {
   const isMobile = useIsMobile();
@@ -20,6 +22,7 @@ const LeftPanel: React.FC = () => {
     useTeamsAndGroupQuery(TEST_USER_ID);
   const { data: matches, isLoading: isMatchesLoading } =
     useMatchesQuery(TEST_USER_ID);
+  const { data: logs, isLoading: isLogsLoading } = useLogsQuery(TEST_USER_ID);
 
   return (
     <div
@@ -56,11 +59,7 @@ const LeftPanel: React.FC = () => {
         <AccordionItem value="logging-history">
           <AccordionTrigger>Logs</AccordionTrigger>
           <AccordionContent>
-            <div className="p-4">
-              <div className="border rounded p-2 mb-2">Log/History Item 1</div>
-              <div className="border rounded p-2 mb-2">Log/History Item 2</div>
-              <div className="border rounded p-2">Log/History Item 3</div>
-            </div>
+            <LoggingTable logs={logs ?? []} isLoading={isLogsLoading} />
           </AccordionContent>
         </AccordionItem>
       </Accordion>
