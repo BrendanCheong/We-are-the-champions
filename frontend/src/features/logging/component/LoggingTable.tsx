@@ -9,6 +9,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import LogDetailsDialog from "./LogDetailsDialog";
 import { Log } from "../types";
 
@@ -20,6 +27,12 @@ interface LoggingTableProps {
 const LoggingTable: React.FC<LoggingTableProps> = ({ logs, isLoading }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedLog, setSelectedLog] = useState<Log | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = logs.slice(indexOfFirstItem, indexOfLastItem);
 
   function handleViewDetails(log: Log) {
     setSelectedLog(log);
@@ -29,6 +42,15 @@ const LoggingTable: React.FC<LoggingTableProps> = ({ logs, isLoading }) => {
   function handleCloseDialog() {
     setIsDialogOpen(false);
     setSelectedLog(null);
+  }
+
+  function handlePageChange(pageNumber: number) {
+    setCurrentPage(pageNumber);
+  }
+
+  function handleItemsPerPageChange(value: string) {
+    setItemsPerPage(Number(value));
+    setCurrentPage(1);
   }
 
   if (isLoading) {
@@ -42,6 +64,20 @@ const LoggingTable: React.FC<LoggingTableProps> = ({ logs, isLoading }) => {
         of <strong>create</strong>, <strong>delete</strong>,{" "}
         <strong>put</strong>.
       </p>
+      <div className="mb-4">
+        <Select
+          onValueChange={handleItemsPerPageChange}
+          value={itemsPerPage.toString()}
+        >
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Items per page" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="5">5 per page</SelectItem>
+            <SelectItem value="10">10 per page</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
       <Table>
         <TableCaption>All data changes</TableCaption>
         <TableHeader>
@@ -53,9 +89,11 @@ const LoggingTable: React.FC<LoggingTableProps> = ({ logs, isLoading }) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {logs.map((log, index) => (
+          {currentItems.map((log, index) => (
             <TableRow key={log.id}>
-              <TableCell className="font-medium">{index + 1}</TableCell>
+              <TableCell className="font-medium">
+                {indexOfFirstItem + index + 1}
+              </TableCell>
               <TableCell>{log.actionType}</TableCell>
               <TableCell>{log.tableName}</TableCell>
               <TableCell>
@@ -71,6 +109,23 @@ const LoggingTable: React.FC<LoggingTableProps> = ({ logs, isLoading }) => {
           ))}
         </TableBody>
       </Table>
+      <div className="mt-4 flex justify-between">
+        <Button
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </Button>
+        <span>
+          Page {currentPage} of {Math.ceil(logs.length / itemsPerPage)}
+        </span>
+        <Button
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={indexOfLastItem >= logs.length}
+        >
+          Next
+        </Button>
+      </div>
       <LogDetailsDialog
         isOpen={isDialogOpen}
         onClose={handleCloseDialog}

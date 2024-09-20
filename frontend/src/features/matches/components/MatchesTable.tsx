@@ -9,6 +9,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import EditMatchDialog from "./EditMatchDialog";
 
 interface MatchResponse {
@@ -31,6 +38,12 @@ const MatchesTable: React.FC<MatchesTableProps> = ({ matches, isLoading }) => {
   const [selectedMatch, setSelectedMatch] = useState<MatchResponse | null>(
     null
   );
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentMatches = matches.slice(indexOfFirstItem, indexOfLastItem);
 
   function handleEditClick(match: MatchResponse) {
     setSelectedMatch(match);
@@ -42,12 +55,35 @@ const MatchesTable: React.FC<MatchesTableProps> = ({ matches, isLoading }) => {
     setSelectedMatch(null);
   }
 
+  function handlePageChange(pageNumber: number) {
+    setCurrentPage(pageNumber);
+  }
+
+  function handleItemsPerPageChange(value: string) {
+    setItemsPerPage(Number(value));
+    setCurrentPage(1);
+  }
+
   if (isLoading) {
     return <div>Loading matches...</div>;
   }
 
   return (
     <>
+      <div className="mb-4">
+        <Select
+          onValueChange={handleItemsPerPageChange}
+          value={itemsPerPage.toString()}
+        >
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Matches per page" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="5">5 per page</SelectItem>
+            <SelectItem value="10">10 per page</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
       <Table>
         <TableCaption>A list of your matches.</TableCaption>
         <TableHeader>
@@ -60,7 +96,7 @@ const MatchesTable: React.FC<MatchesTableProps> = ({ matches, isLoading }) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {matches.map((match) => (
+          {currentMatches.map((match) => (
             <TableRow key={match.id}>
               <TableCell className="font-medium">
                 {match.firstTeamName}
@@ -81,6 +117,23 @@ const MatchesTable: React.FC<MatchesTableProps> = ({ matches, isLoading }) => {
           ))}
         </TableBody>
       </Table>
+      <div className="mt-4 flex justify-between">
+        <Button
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </Button>
+        <span>
+          Page {currentPage} of {Math.ceil(matches.length / itemsPerPage)}
+        </span>
+        <Button
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={indexOfLastItem >= matches.length}
+        >
+          Next
+        </Button>
+      </div>
       <EditMatchDialog
         isOpen={isModalOpen}
         onClose={handleCloseModal}
