@@ -11,7 +11,32 @@ export default class MatchRepository {
     const matches = await prisma.match.findMany({
       where: { createdById: userId },
     });
+
     return matches;
+  }
+
+  async getMatchesAndTeamByUserId(userId: string) {
+    const matches = await prisma.match.findMany({
+      where: { createdById: userId },
+      include: {
+        firstTeam: {
+          select: {
+            name: true,
+          },
+        },
+        secondTeam: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
+
+    return matches.map((match) => ({
+      ...match,
+      firstTeamName: match.firstTeam.name,
+      secondTeamName: match.secondTeam.name,
+    }));
   }
 
   async createManyMatches(data: Prisma.MatchCreateManyInput[]) {

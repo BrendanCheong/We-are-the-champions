@@ -10,14 +10,9 @@ interface LogInput {
 }
 
 export default class LoggingService {
-  private loggingRepository: LogRepository;
-
-  constructor(loggingRepository: LogRepository) {
-    this.loggingRepository = loggingRepository;
-  }
-
   async log(input: LogInput): Promise<Log> {
-    return this.loggingRepository.createLog({
+    const loggingRepository = new LogRepository();
+    return loggingRepository.createLog({
       userId: input.userId,
       actionType: input.actionType,
       tableName: input.tableName,
@@ -27,19 +22,23 @@ export default class LoggingService {
   }
 
   async getUserLogs(userId: string): Promise<Log[]> {
-    return this.loggingRepository.getLogsByUserId(userId);
+    const loggingRepository = new LogRepository();
+    return loggingRepository.getLogsByUserId(userId);
   }
 
   async getLogById(id: string): Promise<Log | null> {
-    return this.loggingRepository.getLogById(id);
+    const loggingRepository = new LogRepository();
+    return loggingRepository.getLogById(id);
   }
 
   async deleteLog(id: string): Promise<Log> {
-    return this.loggingRepository.deleteLog(id);
+    const loggingRepository = new LogRepository();
+    return loggingRepository.deleteLog(id);
   }
 
   async clearUserLogs(userId: string): Promise<number> {
-    const result = await this.loggingRepository.deleteLogsByUserId(userId);
+    const loggingRepository = new LogRepository();
+    const result = await loggingRepository.deleteLogsByUserId(userId);
     return result.count;
   }
 }

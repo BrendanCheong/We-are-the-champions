@@ -55,4 +55,10 @@ export default class MatchService {
 
     return createdMatches;
   }
+
+  async getMatches(userId: string) {
+    const matchRepository = new MatchRepository();
+    const matches = await matchRepository.getMatchesAndTeamByUserId(userId);
+    return matches;
+  }
 }
