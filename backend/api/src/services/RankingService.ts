@@ -1,23 +1,13 @@
 import MatchRepository from '../repositories/MatchRepository';
 import TeamRepository from '../repositories/TeamRepository';
 import GroupRepository from '../repositories/GroupRepository';
-import { RankingRecord } from '../types/ranking';
+import { GroupRanking, RankingRecord } from '../types/ranking';
 import { TeamWithGroup } from '../types/team';
 import { MatchWithTeamNames } from '../types/match';
 import { ALTERNATE_WIN_POINTS, MAXIMUM_AMOUNT_OF_GROUPS, WIN_POINTS } from '../constants/global';
 
-interface GroupRanking {
-  teams: RankingRecord[];
-  groupNumber: number;
-}
-
-interface RankingOutput {
-  firstGroup: GroupRanking;
-  secondGroup: GroupRanking;
-}
-
 export default class RankingService {
-  async getRanking(userId: string): Promise<RankingOutput> {
+  async getRanking(userId: string) {
     const teamRepository = new TeamRepository();
     const matchRepository = new MatchRepository();
     const groupRepository = new GroupRepository();
@@ -99,10 +89,10 @@ export default class RankingService {
     };
   }
 
-  private createEmptyRanking(): RankingOutput {
+  private createEmptyRanking() {
     return {
-      firstGroup: { teams: [], groupNumber: 1 },
-      secondGroup: { teams: [], groupNumber: 2 },
+      firstGroup: { teams: [] },
+      secondGroup: { teams: [] },
     };
   }
 }

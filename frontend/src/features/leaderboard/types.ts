@@ -14,3 +14,8 @@ export interface GroupRanking {
   teams: RankingRecord[];
   groupNumber?: number;
 }
+
+export interface RankingResponse {
+  firstGroup: GroupRanking;
+  secondGroup: GroupRanking;
+}

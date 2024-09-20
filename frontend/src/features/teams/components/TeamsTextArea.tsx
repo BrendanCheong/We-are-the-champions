@@ -13,6 +13,7 @@ import { TEST_USER_ID } from "@/config/constants";
 import transformTeamsData from "../utils";
 import { useCreateTeamsMutation } from "../api/useTeamsQuery";
 import { useQueryClient } from "@tanstack/react-query";
+import { GET_RANKING_QUERY_KEY } from "@/features/leaderboard/constants";
 
 interface IProps {
   teams: TeamAndGroupResponse[];
@@ -26,11 +27,15 @@ const TeamsTextArea: React.FC<IProps> = (props) => {
   const queryClient = useQueryClient();
 
   const { mutate: mutateTeams } = useCreateTeamsMutation({
-    onSuccess: (data) => {
-      console.log("Teams created successfully:", data);
-      queryClient.invalidateQueries({
-        queryKey: [GET_TEAMS_AND_GROUP_QUERY_KEY, TEST_USER_ID],
-      });
+    onSuccess: () => {
+      Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: [GET_TEAMS_AND_GROUP_QUERY_KEY, TEST_USER_ID],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: [GET_RANKING_QUERY_KEY, TEST_USER_ID],
+        }),
+      ]);
       setTeamsInputError("");
     },
     onError: (error: Error) => {

@@ -6,6 +6,8 @@ import { TEST_USER_ID } from "@/config/constants";
 import { useTeamsAndGroupQuery } from "@/features/teams/api/useTeamsQuery";
 import MatchesTable from "@/features/matches/components/MatchesTable";
 import { useMatchesQuery } from "@/features/matches/api/useMatchesQuery";
+import { useRankingQuery } from "@/features/leaderboard/api/useLeaderboardQuery";
+import LeaderboardTable from "@/features/leaderboard/components/LeaderboardTable";
 
 const RightPanel: React.FC = () => {
   const isMobile = useIsMobile();
@@ -13,6 +15,9 @@ const RightPanel: React.FC = () => {
     useTeamsAndGroupQuery(TEST_USER_ID);
   const { data: matches, isLoading: isMatchesLoading } =
     useMatchesQuery(TEST_USER_ID);
+  const { data: leaderboards, isLoading: isLeaderboardsLoading } =
+    useRankingQuery(TEST_USER_ID);
+  console.log(leaderboards, isLeaderboardsLoading);
 
   return (
     <div className={`${isMobile ? "w-full" : "w-[57%]"} p-4`} id="right-panel">
@@ -28,7 +33,26 @@ const RightPanel: React.FC = () => {
         <TabsContent value="matches">
           <MatchesTable matches={matches ?? []} isLoading={isMatchesLoading} />
         </TabsContent>
-        <TabsContent value="leaderboards">leaderboards table</TabsContent>
+        <TabsContent value="leaderboards">
+          <div className="space-y-8">
+            {isLeaderboardsLoading ? (
+              <div>Loading leaderboards...</div>
+            ) : leaderboards ? (
+              <div className="space-y-8">
+                <LeaderboardTable
+                  groupRankings={[leaderboards.firstGroup]}
+                  isLoading={isLeaderboardsLoading}
+                />
+                <LeaderboardTable
+                  groupRankings={[leaderboards.secondGroup]}
+                  isLoading={isLeaderboardsLoading}
+                />
+              </div>
+            ) : (
+              <div>No leaderboard data available.</div>
+            )}
+          </div>
+        </TabsContent>
       </Tabs>
     </div>
   );
