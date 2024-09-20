@@ -9,6 +9,7 @@ import transformMatchesData from "../utils";
 import { useCreateMatchesMutation } from "../api/useMatchesQuery";
 import { useQueryClient } from "@tanstack/react-query";
 import { GET_RANKING_QUERY_KEY } from "@/features/leaderboard/constants";
+import { GET_TEAMS_AND_GROUP_QUERY_KEY } from "@/features/teams/constants";
 
 interface IProps {
   matches: GetMatchesAndTeamsResponse[];
@@ -24,6 +25,9 @@ const MatchesTextArea: React.FC<IProps> = (props) => {
   const { mutate: mutateMatches } = useCreateMatchesMutation({
     onSuccess: () => {
       Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: [GET_TEAMS_AND_GROUP_QUERY_KEY, TEST_USER_ID],
+        }),
         queryClient.invalidateQueries({
           queryKey: [GET_MATCHES_QUERY_KEY, TEST_USER_ID],
         }),

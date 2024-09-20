@@ -2,9 +2,10 @@ import { FIVE_MINUTES, RETRY_COUNT, TEN_MINUTES } from "@/config/constants";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { GET_RANKING_QUERY_KEY } from "../constants";
+import { RankingResponse } from "../types";
 
 const getRanking = async (userId: string) => {
-  const response = await axios.get(
+  const response = await axios.get<RankingResponse>(
     `${import.meta.env.VITE_APP_API_URL}/ranking?userId=${userId}`
   );
   return response.data;
