@@ -1,5 +1,6 @@
 {
 	"devDependencies": {
-		"@types/bcrypt": "^5.0.2"
+		"@types/bcrypt": "^5.0.2",
+		"eslint": "^9.11.0"
 	}
 }

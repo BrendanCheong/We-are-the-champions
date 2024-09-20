@@ -1,0 +1,42 @@
+name: Static Code Analysis
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  eslint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Use Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'  # Adjust this to match your project's Node.js version
+    
+    - name: Install dependencies (Frontend)
+      working-directory: ./we-are-the-champions/frontend
+      run: npm ci
+    
+    - name: Run ESLint (Frontend)
+      working-directory: ./we-are-the-champions/frontend
+      run: npx eslint . --ext .js,.jsx,.ts,.tsx --format json --output-file ../../frontend-eslint-report.json
+    
+    - name: Install dependencies (Backend)
+      working-directory: ./we-are-the-champions/backend
+      run: npm ci
+    
+    - name: Run ESLint (Backend)
+      working-directory: ./we-are-the-champions/backend
+      run: npx eslint . --ext .js,.ts --format json --output-file ../../backend-eslint-report.json
+    
+    - name: Upload ESLint reports
+      uses: actions/upload-artifact@v2
+      with:
+        name: eslint-reports
+        path: |
+          frontend-eslint-report.json
+          backend-eslint-report.json
