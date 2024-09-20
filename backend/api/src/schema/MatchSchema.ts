@@ -1,10 +1,10 @@
 import { z } from 'zod';
 
 export const MatchSchema = z.object({
-  teamA: z.string(),
-  teamB: z.string(),
-  scoreA: z.number().int().positive(),
-  scoreB: z.number().int().positive(),
+  firstTeam: z.string(),
+  secondTeam: z.string(),
+  firstTeamGoals: z.number().int().positive(),
+  secondTeamGoals: z.number().int().positive(),
 });
 
 export const MatchesInputSchema = z.object({
